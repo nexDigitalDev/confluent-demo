@@ -1,0 +1,6 @@
+/*.json
+.terraform
+.terraform.lock.hcl
+*.tfstate*
+tfplan*
+env.sh
