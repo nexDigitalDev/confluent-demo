@@ -7,7 +7,7 @@ The idea behind this project is to use the file *.tfvars.json as a descriptor th
 The current structure of the file *.tfvars.json is as follows:
 ```json
 {
-    "environment": // name of the environment (generally deployment, staging or production)
+    "environment": // name of the environment (generally development, staging or production)
     "tf_runner_account_id": // the id of a service account that should be created manually and which will be used as the main account to run terraform
     "clusters": // the list of clusters to create divided into 3 blocks: basic, standard and dedicated, which corresponds to the type of the cluster that will be deployed
     {
