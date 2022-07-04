@@ -1,18 +1,16 @@
 locals {
+  all_clusters = merge(var.clusters.basic, var.clusters.standard, var.clusters.dedicated)
   topics_list = flatten([
-    for cluster in keys(var.clusters.basic) : [
-      for topic in keys(var.clusters.basic[cluster]["topics"]) : {
-        cluster = confluent_kafka_cluster.clusters[cluster]
+    for cluster in keys(local.all_clusters) : [
+      for topic in keys(local.all_clusters[cluster]["topics"]) : {
+        cluster = local.clusters[cluster]
         topic = {
           topic_name = topic
-          topic_settings = var.clusters.basic[cluster]["topics"][topic]
+          topic_settings = local.all_clusters[cluster]["topics"][topic]
         }
       }
     ]
   ])
-}
-
-locals {
   topics_map = {
     for obj in local.topics_list : "${obj.cluster.display_name}_${obj.topic.topic_name}" => obj
   }
