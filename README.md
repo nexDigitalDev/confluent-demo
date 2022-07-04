@@ -47,8 +47,8 @@ The terraform will deploy the following elements:
 - a service account named "consumer_{environment}"
 - an API key in each cluster created for the consumer sa
 - the topics as defined in the the tfvars.json file for every cluster
-- the acl "WRITE" for the producer sa
-- the acl "READ" for the consumer sa
+- the acl "WRITE" for the producer sa to all the topics created
+- the acl "READ" for the consumer sa to all the topics created
 
 The keys are stored in the following paths:
 - for Confluent Cloud API keys: `secret/ccloud/api_key/{user or service account id}`
