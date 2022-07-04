@@ -75,6 +75,13 @@ $ vault server -dev
 ```
 (install vault if not already)
 - save the vault key in `.env` file
+- save the API key created in the vault in path `secret/ccloud/api_key/{service account id}` as follows:
+```json
+{
+    "key": <API key>,
+    "secret": <API secret>
+}
+```
 - run terraform:
 ```bash
 $ terraform init
