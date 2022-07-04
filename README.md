@@ -61,3 +61,22 @@ The keys are stored in the following paths:
 - A confluent cloud account and organisation
 - A service account with role binding "OrganisationAdmin"
 - A Confluent Cloud API key for this service account and saved in the vault in the path `secret/ccloud/api_key/{service account id}`
+
+## Quickstart
+
+For Linux and Windows (wsl):
+
+- Create a Confluent Cloud account (if not done already) in confluent.cloud
+- Create a service account and API key following the steps here: https://docs.confluent.io/cloud/current/access-management/identity/service-accounts.html#create-service-accounts-ui
+- save the service account id in the development.tfvars.json in the field `tf_runner_account_id`
+- start a dev vault server by running:
+```bash
+$ vault server -dev
+```
+(install vault if not already)
+- save the vault key in `.env` file
+- run terraform:
+```bash
+$ terraform init
+$ terraform apply -var-file="environment/development.tfvars.json"
+```
