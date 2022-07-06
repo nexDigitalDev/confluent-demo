@@ -67,7 +67,7 @@ The keys are stored in the following paths:
 For Linux and Windows (wsl):
 
 - Create a Confluent Cloud account (if not done already) in confluent.cloud
-- Create a service account and API key following the steps here: https://docs.confluent.io/cloud/current/access-management/identity/service-accounts.html#create-service-accounts-ui
+- Create a service account and API key following the steps here: https://docs.confluent.io/cloud/current/access-management/identity/service-accounts.html#create-service-accounts-ui and add the role binding "OrganisationAdmin" for it.
 - save the service account id in the development.tfvars.json in the field `tf_runner_account_id`
 - start a dev vault server by running:
 ```bash
