@@ -35,16 +35,10 @@ $confluent iam rbac role-binding create --role MetricsViewer --principal User:$s
 ```bash
 $confluent api-key create --resource cloud --service-account $sa-id
 ```
-### Step2: Clone this repo 
 
-```bash
-git clone https://github.com/confluentinc/jmx-monitoring-stacks
-cd jmx-monitoring-stacks/ccloud-prometheus-grafana
-```
+### Step2: 
 
-### Step3: 
-
-Edit the env_variables.env file by adding : this depends on the ressource you want to monitor 
+Edit the var.env file by adding : this depends on the ressource you want to monitor 
 - Cluster ID
 - Cluster API KEy and password 
 - Ksql cluster ID
