@@ -1,0 +1,20 @@
+prometheus:
+  image: prom/prometheus
+  container_name: prometheus
+  ports:
+    - 9090:9090
+  volumes:
+    - ./config/prometheus/:/etc/prometheus/
+
+grafana:
+  image: grafana/grafana:7.4.1
+  hostname: grafana
+  container_name: grafana
+  environment:
+    GF_INSTALL_PLUGINS: grafana-piechart-panel
+  ports:
+    - 3000:3000
+  volumes:
+    - .config/grafana/:/etc/grafana/provisioning/
+  depends_on:
+    - prometheus
