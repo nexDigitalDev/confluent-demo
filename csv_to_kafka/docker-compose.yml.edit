@@ -1,0 +1,91 @@
+---
+version: '2'
+services:
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect-base:6.1.0
+    container_name: kafka-connect
+    ports:
+      - 8083:8083
+    environment:
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+      CONNECT_CUB_KAFKA_TIMEOUT: 300
+      CONNECT_BOOTSTRAP_SERVERS: "pkc-ymrq7.us-east-2.aws.confluent.cloud:9092"
+      CONNECT_REST_ADVERTISED_HOST_NAME: 'kafka-connect-ccloud'
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: kafka-connect-group-01-v04
+      CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-group-01-v04-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _kafka-connect-group-01-v04-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _kafka-connect-group-01-v04-status
+      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "https://psrc-95km5.eu-central-1.aws.confluent.cloud"
+      CONNECT_KEY_CONVERTER_BASIC_AUTH_CREDENTIALS_SOURCE: "USER_INFO"
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO: "$SR_KEY:$SR_SECRET"
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "https://psrc-95km5.eu-central-1.aws.confluent.cloud"
+      CONNECT_VALUE_CONVERTER_BASIC_AUTH_CREDENTIALS_SOURCE: "USER_INFO"
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO: "$SR_KEY:$SR_SECRET"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: 'INFO'
+      CONNECT_LOG4J_LOGGERS: 'org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR'
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components/'
+      # Confluent Cloud config
+      CONNECT_REQUEST_TIMEOUT_MS: "20000"
+      CONNECT_RETRY_BACKOFF_MS: "500"
+      CONNECT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "https"
+      CONNECT_SASL_MECHANISM: "PLAIN"
+      CONNECT_SECURITY_PROTOCOL: "SASL_SSL"
+      CONNECT_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$KAFKA_API_KEY\" password=\"$KAFKA_API_SECRET\";"
+      #
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: "SASL_SSL"
+      CONNECT_CONSUMER_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "https"
+      CONNECT_CONSUMER_SASL_MECHANISM: "PLAIN"
+      CONNECT_CONSUMER_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$KAFKA_API_KEY\" password=\"$KAFKA_API_SECRET\";"
+      CONNECT_CONSUMER_REQUEST_TIMEOUT_MS: "20000"
+      CONNECT_CONSUMER_RETRY_BACKOFF_MS: "500"
+      #
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: "SASL_SSL"
+      CONNECT_PRODUCER_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "https"
+      CONNECT_PRODUCER_SASL_MECHANISM: "PLAIN"
+      CONNECT_PRODUCER_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$KAFKA_API_KEY\" password=\"$KAFKA_API_SECRET\";"
+      CONNECT_PRODUCER_REQUEST_TIMEOUT_MS: "20000"
+      CONNECT_PRODUCER_RETRY_BACKOFF_MS: "500"    
+    command: 
+      - bash 
+      - -c 
+      - |
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-spooldir:latest
+        confluent-hub install --no-prompt streamthoughts/kafka-connect-file-pulse:latest
+        #
+        # -----------
+        # Launch the Kafka Connect worker
+        /etc/confluent/docker/run &
+        #
+        # Don't exit
+        sleep infinity
+    volumes:
+      - $PWD/data:/data
+
+  postgres:
+    # *-----------------------------*
+    # To connect to the DB: 
+    #   docker exec -it postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB'
+    # *-----------------------------*
+    image: postgres:12
+    container_name: postgres
+    environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
+
+  kafkacat:
+    image: edenhill/kafkacat:1.6.0
+    container_name: kafkacat
+    entrypoint: 
+      - /bin/sh 
+      - -c 
+      - |
+        apk add jq; 
+        while [ 1 -eq 1 ];do sleep 60;done
