@@ -1,0 +1,53 @@
+---
+version: '2'
+services:
+
+  connect:
+    image: localbuild/connect_standalone_with_${CONNECTOR_NAME}:${CONNECTOR_VERSION}
+    hostname: connect
+    container_name: connect
+    environment:
+      # CONNECT_ properties are for the Connect worker
+      CONNECT_BOOTSTRAP_SERVERS: $BOOTSTRAP_SERVERS
+      CONNECT_OFFSET_STORAGE_FILE_FILENAME: /tmp/connect.offsets
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_SASL_JAAS_CONFIG: $SASL_JAAS_CONFIG
+      CONNECT_SASL_MECHANISM: PLAIN
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_PRODUCER_SASL_JAAS_CONFIG: $SASL_JAAS_CONFIG
+      CONNECT_PRODUCER_SASL_MECHANISM: PLAIN
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_CONSUMER_SASL_JAAS_CONFIG: $SASL_JAAS_CONFIG
+      CONNECT_CONSUMER_SASL_MECHANISM: PLAIN
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_PLUGIN_PATH: /usr/share/confluent-hub-components/splunk-kafka-connect-splunk/
+
+      # CONNECTOR_ properties are for the connector itself, example shown below
+      CONNECTOR_NAME: SplunkSinkCCloudAuditLogs
+      CONNECTOR_CONNECTOR_CLASS: com.splunk.kafka.connect.SplunkSinkConnector
+      CONNECTOR_TOPICS: confluent-audit-log-events
+      CONNECTOR_TASKS_MAX: 1
+      CONNECTOR_SPLUNK_INDEXES: main
+      CONNECTOR_SPLUNK_HEC_URI: https://splunk:8088
+      CONNECTOR_SPLUNK_HEC_TOKEN: 3bca5f4c-1eff-4eee-9113-ea94c284478a
+      CONNECTOR_SPLUNK_SOURCETYPES: ccloud_audit_logs
+      CONNECTOR_CONFLUENT_TOPIC_BOOTSTRAP_SERVERS: $BOOTSTRAP_SERVERS
+      CONNECTOR_SPLUNK_HEC_SSL_VALIDATE_CERTS: "false"
+      CONNECTOR_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
+      CONNECTOR_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    user: root
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_HEC_TOKEN=3bca5f4c-1eff-4eee-9113-ea94c284478a
+      - SPLUNK_PASSWORD=Password1
+      # - SPLUNK_LICENSE_URI=Free
+      - SPLUNK_APPS_URL=https://raw.githubusercontent.com/JohnnyMirza/ccloudauditlogs_splunk/main/splunk-apps/confluent_cloud_app.tgz,https://raw.githubusercontent.com/JohnnyMirza/ccloudauditlogs_splunk/main/splunk-apps/splunk-sankey-diagram-custom-visualization_150.tgz
+    ports:
+      - 8000:8000
+      - 8089:8088
