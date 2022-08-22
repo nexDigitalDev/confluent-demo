@@ -1,6 +1,6 @@
-#CSV to kafka 
+# CSV to kafka 
 
-##STEP1: Running a self managed connect worker for confluent cloud :
+## STEP1: Running a self managed connect worker for confluent cloud :
 
 In order to run a self managed connector for confluent cloud , we start by pooling the docker Kafka connect image :
 ```bash 
@@ -26,21 +26,24 @@ Let's make sure that our plugins are well installed :
  ```
  <img width="692" alt="Screenshot_1" src="https://user-images.githubusercontent.com/103249046/185931277-455e5830-2574-4e45-9f98-cc871c5ef367.png">
  
-#STEP2:
+# STEP2:
 Copy your data folder into the kafka-connect-ccloud container :
 
 ```bash
   docker cp folder_path container_id:/folder_name
  ```
-To get the container :
+To get the container_id  :
 
 ```bash
   docker ps 
 ```
 
-#STEP3:Run the docker compose file 
+## STEP3:Run the docker compose file 
 
-# WIP
+```bash
+  docker compose -d up 
+```
+## WIP
 
 ```bash
 curl -i -X PUT -H "Accept:application/json"     -H  "Content-Type:application/json" http://localhost:8083/connectors/source-csv-spooldir-00/config     -d '{
