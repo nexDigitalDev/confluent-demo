@@ -41,7 +41,7 @@ To get the container_id  :
 ## STEP3:Run the docker compose file 
 
 ```bash
-  docker compose -d up 
+  docker-compose up -d
 ```
 ## WIP
 
