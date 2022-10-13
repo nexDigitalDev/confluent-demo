@@ -13,9 +13,9 @@ Then we will use Ksql to perform filtering, join, aggregation operations on thes
 ![image](https://user-images.githubusercontent.com/103249046/195542579-237afe5c-34e2-40d4-9880-2f16ae946d5f.png)
 
 
--Confluent cloud : 2 cluster (ksql cluster for data processing and a dev cluster)
+- Confluent cloud : 2 cluster (ksql cluster for data processing and a dev cluster)
                                              One connector (the Datagen connector )
--Docker : mysql , kafka connect , elasticsearch , kibana containers 
+- Docker : mysql , kafka connect , elasticsearch , kibana containers 
 
 ## Input data : 
 
@@ -34,13 +34,13 @@ Then we will use Ksql to perform filtering, join, aggregation operations on thes
 
 ```bash
  #mysql , elasticsearch and kibana
- docker-compose -f docker_compose.yml up 
+ $ docker-compose -f docker_compose.yml up 
  #Kafka connect 
- docker-compose -f docker-compose.yml
+ $ docker-compose -f docker-compose.yml
  ```
 3. Configure self managed debezium source  connector : 
 ```bash
-./run.sh 
+$ ./run.sh 
  ```
 4. Launch the datagen connectors directly from confluent cloud . 
 5. Create the ksql cluster + import the topics (rating +customers ) as streams to ksql 
@@ -48,7 +48,7 @@ Then we will use Ksql to perform filtering, join, aggregation operations on thes
 7. Configure elastic search sink connector 
 
 ```bash
-curl -s -i -X PUT -H  "Content-Type:application/json"     http://localhost:8083/connectors/sink-elastic-01/config     -d '{
+$ curl -s -i -X PUT -H  "Content-Type:application/json"     http://localhost:8083/connectors/sink-elastic-01/config     -d '{
             "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
             "connection.url": "http://elasticsearch7:9200",
             "type.name": "_doc",
